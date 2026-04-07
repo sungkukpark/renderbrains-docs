@@ -1,0 +1,1489 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Karpathy's LLM Wiki Pattern</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --bg: #f6f8fa;
+        --bg2: #ffffff;
+        --bg3: #eaeef2;
+        --border: #d0d7de;
+        --text: #1f2328;
+        --dim: #656d76;
+        --blue: #0969da;
+        --green: #1a7f37;
+        --yellow: #9a6700;
+        --purple: #8250df;
+        --pink: #bf3989;
+      }
+
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family:
+          "Geist Mono", monospace;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        user-select: none;
+      }
+
+      /* ── HEADER ── */
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 28px;
+        height: 56px;
+        border-bottom: 1px solid var(--border);
+        background: rgba(246, 248, 250, 0.92);
+        backdrop-filter: blur(8px);
+        flex-shrink: 0;
+        position: relative;
+        z-index: 10;
+      }
+
+      .title-block h1 {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--text);
+        letter-spacing: 2px;
+        text-transform: uppercase;
+      }
+      .title-block p {
+        font-size: 12px;
+        color: var(--dim);
+        letter-spacing: 1px;
+        margin-top: 6px;
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      .hdr-badge {
+        font-size: 10px;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 3px;
+        letter-spacing: 0.5px;
+      }
+      .hdr-badge.blue {
+        background: rgba(9, 105, 218, 0.12);
+        color: var(--blue);
+        border: 1px solid rgba(9, 105, 218, 0.3);
+      }
+      .hdr-badge.green {
+        background: rgba(26, 127, 55, 0.12);
+        color: var(--green);
+        border: 1px solid rgba(26, 127, 55, 0.3);
+      }
+      .hdr-badge.yellow {
+        background: rgba(154, 103, 0, 0.12);
+        color: var(--yellow);
+        border: 1px solid rgba(154, 103, 0, 0.3);
+      }
+
+      .ops {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+      }
+
+      .op-btn {
+        padding: 6px 16px;
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--dim);
+        font-family: inherit;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        cursor: pointer;
+        border-radius: 3px;
+        transition: all 0.2s;
+        outline: none;
+      }
+
+      /* 비활성: 연한 tint */
+      .op-btn[data-mode="ingest"] {
+        border-color: var(--blue);
+        color: var(--blue);
+        background: rgba(9, 105, 218, 0.07);
+        opacity: 0.55;
+      }
+      .op-btn[data-mode="query"] {
+        border-color: var(--green);
+        color: var(--green);
+        background: rgba(26, 127, 55, 0.07);
+        opacity: 0.55;
+      }
+      .op-btn[data-mode="lint"] {
+        border-color: var(--yellow);
+        color: var(--yellow);
+        background: rgba(154, 103, 0, 0.07);
+        opacity: 0.55;
+      }
+
+      /* hover */
+      .op-btn[data-mode="ingest"]:hover { opacity: 0.8; }
+      .op-btn[data-mode="query"]:hover  { opacity: 0.8; }
+      .op-btn[data-mode="lint"]:hover   { opacity: 0.8; }
+
+      /* 활성: 솔리드 배경 + 흰 텍스트 */
+      .op-btn[data-mode="ingest"].active {
+        background: var(--blue);
+        color: #ffffff;
+        border-color: var(--blue);
+        opacity: 1;
+        box-shadow: 0 2px 8px rgba(9, 105, 218, 0.35);
+      }
+      .op-btn[data-mode="query"].active {
+        background: var(--green);
+        color: #ffffff;
+        border-color: var(--green);
+        opacity: 1;
+        box-shadow: 0 2px 8px rgba(26, 127, 55, 0.35);
+      }
+      .op-btn[data-mode="lint"].active {
+        background: var(--yellow);
+        color: #ffffff;
+        border-color: var(--yellow);
+        opacity: 1;
+        box-shadow: 0 2px 8px rgba(154, 103, 0, 0.35);
+      }
+
+      .auto-badge {
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--dim);
+        letter-spacing: 1px;
+        padding: 4px 10px;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .auto-badge:hover {
+        border-color: #8c959f;
+        color: var(--text);
+      }
+      .auto-badge.on {
+        border-color: var(--green);
+        color: var(--green);
+      }
+
+      /* ── STAGE ── */
+      .stage {
+        flex: 1;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 20px 28px 8px;
+        min-height: 0;
+        overflow: hidden;
+      }
+
+      canvas#flow {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+      }
+
+      /* Architecture */
+      .arch {
+        display: flex;
+        align-items: stretch;
+        gap: 10px;
+        width: 100%;
+        max-width: 980px;
+        z-index: 1;
+      }
+
+      /* ── LAYER PANELS ── */
+      .layer-panel {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+        min-width: 0;
+      }
+
+      .layer-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 2px;
+      }
+
+      .layer-num {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        border: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        color: var(--dim);
+        flex-shrink: 0;
+        transition: all 0.3s;
+      }
+
+      .layer-name {
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        color: var(--dim);
+        transition: color 0.3s;
+      }
+      .layer-sub {
+        font-size: 11px;
+        color: var(--dim);
+        letter-spacing: 0.5px;
+      }
+
+      /* File cards */
+      .file-card {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        padding: 8px 11px;
+        transition:
+          border-color 0.35s,
+          box-shadow 0.35s,
+          background 0.35s;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .file-card::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: transparent;
+        transition: background 0.35s;
+      }
+
+      .fc-top {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 6px;
+      }
+      .fc-icon {
+        font-size: 14px;
+      }
+      .fc-name {
+        font-size: 13px;
+        font-weight: 600;
+        color: #57606a;
+        flex: 1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .fc-tag {
+        font-size: 10px;
+        padding: 1px 5px;
+        border-radius: 2px;
+        background: var(--bg3);
+        color: var(--dim);
+        letter-spacing: 1px;
+        transition: all 0.3s;
+        white-space: nowrap;
+      }
+
+      .fc-lines {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+      }
+      .fc-line {
+        height: 3px;
+        background: var(--border);
+        border-radius: 1px;
+        transition:
+          background 0.3s,
+          width 0.3s;
+      }
+
+      /* Highlight states */
+      .file-card.hl-ingest {
+        border-color: rgba(88, 166, 255, 0.5);
+        background: rgba(88, 166, 255, 0.03);
+        box-shadow: 0 0 12px rgba(88, 166, 255, 0.1);
+      }
+      .file-card.hl-ingest::before {
+        background: var(--blue);
+      }
+      .file-card.hl-ingest .fc-line {
+        background: rgba(88, 166, 255, 0.2);
+      }
+      .file-card.hl-ingest .fc-tag {
+        background: rgba(88, 166, 255, 0.12);
+        color: var(--blue);
+      }
+
+      .file-card.hl-query {
+        border-color: rgba(63, 185, 80, 0.5);
+        background: rgba(63, 185, 80, 0.03);
+        box-shadow: 0 0 12px rgba(63, 185, 80, 0.1);
+      }
+      .file-card.hl-query::before {
+        background: var(--green);
+      }
+      .file-card.hl-query .fc-line {
+        background: rgba(63, 185, 80, 0.2);
+      }
+      .file-card.hl-query .fc-tag {
+        background: rgba(63, 185, 80, 0.12);
+        color: var(--green);
+      }
+
+      .file-card.hl-lint {
+        border-color: rgba(210, 153, 34, 0.5);
+        background: rgba(210, 153, 34, 0.03);
+        box-shadow: 0 0 12px rgba(210, 153, 34, 0.1);
+      }
+      .file-card.hl-lint::before {
+        background: var(--yellow);
+      }
+      .file-card.hl-lint .fc-line {
+        background: rgba(210, 153, 34, 0.2);
+      }
+      .file-card.hl-lint .fc-tag {
+        background: rgba(210, 153, 34, 0.12);
+        color: var(--yellow);
+      }
+
+      /* Update flash */
+      @keyframes flash-update {
+        0% {
+          background: rgba(9, 105, 218, 0.12);
+        }
+        100% {
+          background: rgba(9, 105, 218, 0.03);
+        }
+      }
+      .file-card.flash {
+        animation: flash-update 0.6s ease-out;
+      }
+
+      /* ── LLM CENTER ── */
+      .llm-col {
+        flex: 0 0 170px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 14px;
+        padding: 0 8px;
+      }
+
+      .llm-orb {
+        width: 112px;
+        height: 112px;
+        border-radius: 50%;
+        border: 1.5px solid var(--purple);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: radial-gradient(
+          circle at center,
+          rgba(130, 80, 223, 0.08) 0%,
+          transparent 70%
+        );
+        animation: orb-pulse 3s ease-in-out infinite;
+        position: relative;
+      }
+
+      .orb-ring {
+        position: absolute;
+        inset: -8px;
+        border-radius: 50%;
+        border: 1px solid rgba(130, 80, 223, 0.25);
+        animation: ring-spin 8s linear infinite;
+      }
+      .orb-ring-2 {
+        position: absolute;
+        inset: -16px;
+        border-radius: 50%;
+        border: 1px dashed rgba(130, 80, 223, 0.15);
+        animation: ring-spin 12s linear infinite reverse;
+      }
+
+      @keyframes ring-spin {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      @keyframes orb-pulse {
+        0%,
+        100% {
+          box-shadow:
+            0 0 16px rgba(130, 80, 223, 0.2),
+            0 0 32px rgba(130, 80, 223, 0.08);
+        }
+        50% {
+          box-shadow:
+            0 0 28px rgba(130, 80, 223, 0.35),
+            0 0 52px rgba(130, 80, 223, 0.15);
+        }
+      }
+
+      .orb-emoji {
+        font-size: 32px;
+        line-height: 1;
+      }
+      .orb-label {
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--purple);
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        margin-top: 6px;
+      }
+      .orb-status {
+        font-size: 11px;
+        color: var(--dim);
+        letter-spacing: 0.5px;
+        text-align: center;
+        transition: color 0.3s;
+      }
+
+      /* Schema node */
+      .schema-node {
+        width: 100%;
+        border: 1px dashed rgba(154, 103, 0, 0.5);
+        border-radius: 4px;
+        padding: 8px 10px;
+        background: rgba(154, 103, 0, 0.05);
+        text-align: center;
+      }
+      .schema-title {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--yellow);
+        letter-spacing: 1px;
+      }
+      .schema-desc {
+        font-size: 10px;
+        color: var(--dim);
+        margin-top: 3px;
+        letter-spacing: 0.5px;
+      }
+      .schema-rules {
+        margin-top: 6px;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+      .schema-rule {
+        font-size: 10px;
+        color: var(--dim);
+        letter-spacing: 0.3px;
+        text-align: left;
+      }
+      .schema-rule span {
+        color: var(--yellow);
+        margin-right: 4px;
+      }
+
+      /* ── COMMAND BAR ── */
+      .cmd-bar {
+        margin-top: 14px;
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        padding: 7px 14px;
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+        max-width: 980px;
+        z-index: 1;
+      }
+      .cmd-prompt {
+        color: var(--green);
+      }
+      .cmd-dir {
+        color: var(--blue);
+        opacity: 0.6;
+      }
+      .cmd-text {
+        color: var(--text);
+        flex: 1;
+      }
+      .cmd-cursor {
+        width: 7px;
+        height: 13px;
+        background: var(--text);
+        display: inline-block;
+        animation: cur-blink 1s step-end infinite;
+        flex-shrink: 0;
+      }
+      @keyframes cur-blink {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0;
+        }
+      }
+
+      /* ── BOOKKEEPING LOG ── */
+      footer {
+        border-top: 1px solid var(--border);
+        padding: 10px 28px;
+        height: 84px;
+        flex-shrink: 0;
+        overflow: hidden;
+        background: rgba(234, 238, 242, 0.9);
+      }
+
+      .log-header {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        color: var(--dim);
+        margin-bottom: 7px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .log-dot {
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: var(--green);
+        animation: dot-blink 1.2s step-end infinite;
+      }
+      @keyframes dot-blink {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.2;
+        }
+      }
+
+      .log-lines {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+      .log-line {
+        font-size: 12px;
+        color: var(--dim);
+        opacity: 0;
+        transform: translateX(-6px);
+        transition:
+          opacity 0.35s,
+          transform 0.35s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .log-line.show {
+        opacity: 1;
+        transform: translateX(0);
+      }
+      .log-line.ingest {
+        color: var(--blue);
+      }
+      .log-line.query {
+        color: var(--green);
+      }
+      .log-line.lint {
+        color: var(--yellow);
+      }
+
+      /* ── LEGEND ── */
+      .legend {
+        position: absolute;
+        bottom: 8px;
+        right: 28px;
+        display: flex;
+        gap: 14px;
+        font-size: 11px;
+        color: var(--dim);
+        letter-spacing: 0.5px;
+        z-index: 1;
+      }
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .legend-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+      }
+
+      /* ── MODE INDICATOR ── */
+      .mode-indicator {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        padding: 4px 10px;
+        border-radius: 2px;
+        z-index: 2;
+        transition: all 0.3s;
+      }
+      .mode-indicator.ingest {
+        border: 1px solid rgba(88, 166, 255, 0.4);
+        color: var(--blue);
+        background: rgba(88, 166, 255, 0.08);
+      }
+      .mode-indicator.query {
+        border: 1px solid rgba(63, 185, 80, 0.4);
+        color: var(--green);
+        background: rgba(63, 185, 80, 0.08);
+      }
+      .mode-indicator.lint {
+        border: 1px solid rgba(210, 153, 34, 0.4);
+        color: var(--yellow);
+        background: rgba(210, 153, 34, 0.08);
+      }
+
+      /* ── PROGRESS BAR ── */
+      .progress-track {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: var(--border);
+        overflow: hidden;
+      }
+      .progress-fill {
+        height: 100%;
+        width: 0%;
+        transition:
+          width 0.1s linear,
+          background 0.3s;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- HEADER -->
+    <header>
+      <div class="title-block">
+        <h1>Karpathy's LLM Wiki Pattern</h1>
+        <p>
+          <span class="hdr-badge blue">3-Layer Architecture</span>
+          <span class="hdr-badge green">3 Operations</span>
+          <span class="hdr-badge yellow">Bookkeeping</span>
+        </p>
+      </div>
+      <div class="ops">
+        <button
+          class="op-btn active"
+          data-mode="ingest"
+          onclick="setMode('ingest')"
+        >
+          ⬇ Ingest
+        </button>
+        <button class="op-btn" data-mode="query" onclick="setMode('query')">
+          ⌕ Query
+        </button>
+        <button class="op-btn" data-mode="lint" onclick="setMode('lint')">
+          ✦ Lint
+        </button>
+        <span class="auto-badge on" id="autoBadge" onclick="toggleAuto()"
+          >AUTO ●</span
+        >
+      </div>
+    </header>
+
+    <!-- STAGE -->
+    <div class="stage" id="stage">
+      <canvas id="flow"></canvas>
+
+      <div class="mode-indicator ingest" id="modeIndicator">● INGEST</div>
+
+      <div class="arch" id="arch">
+        <!-- LAYER 1: SOURCES -->
+        <div class="layer-panel" id="panel-src">
+          <div class="layer-header">
+            <div class="layer-num" id="num-src">1</div>
+            <div>
+              <div class="layer-name" id="lname-src">Sources</div>
+              <div class="layer-sub">raw input materials</div>
+            </div>
+          </div>
+
+          <div class="file-card hl-ingest" id="src1">
+            <div class="fc-top">
+              <span class="fc-icon">📄</span>
+              <span class="fc-name">siggraph_deferred.pdf</span>
+              <span class="fc-tag" id="src1-tag">queued</span>
+            </div>
+            <div class="fc-lines">
+              <div class="fc-line" style="width: 88%"></div>
+              <div class="fc-line" style="width: 72%"></div>
+              <div class="fc-line" style="width: 95%"></div>
+            </div>
+          </div>
+
+          <div class="file-card hl-ingest" id="src2">
+            <div class="fc-top">
+              <span class="fc-icon">📋</span>
+              <span class="fc-name">dx12_release_notes.txt</span>
+              <span class="fc-tag" id="src2-tag">queued</span>
+            </div>
+            <div class="fc-lines">
+              <div class="fc-line" style="width: 75%"></div>
+              <div class="fc-line" style="width: 60%"></div>
+            </div>
+          </div>
+
+          <div class="file-card hl-ingest" id="src3">
+            <div class="fc-top">
+              <span class="fc-icon">⚙️</span>
+              <span class="fc-name">cuda_kernel_design.md</span>
+              <span class="fc-tag" id="src3-tag">queued</span>
+            </div>
+            <div class="fc-lines">
+              <div class="fc-line" style="width: 65%"></div>
+              <div class="fc-line" style="width: 82%"></div>
+              <div class="fc-line" style="width: 50%"></div>
+            </div>
+          </div>
+
+          <div class="file-card hl-ingest" id="src4">
+            <div class="fc-top">
+              <span class="fc-icon">🐙</span>
+              <span class="fc-name">vulkan_pr_notes.md</span>
+              <span class="fc-tag" id="src4-tag">queued</span>
+            </div>
+            <div class="fc-lines">
+              <div class="fc-line" style="width: 90%"></div>
+              <div class="fc-line" style="width: 55%"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- LLM CENTER -->
+        <div class="llm-col" id="llm-col">
+          <div class="llm-orb" id="llm-orb">
+            <div class="orb-ring"></div>
+            <div class="orb-ring-2"></div>
+            <div class="orb-emoji">🧠</div>
+            <div class="orb-label">LLM</div>
+          </div>
+          <div class="orb-status" id="orb-status">ingesting...</div>
+
+          <!-- Schema — Layer 3 -->
+          <div class="schema-node" id="schema-node">
+            <div class="schema-title">📋 ARCHITECT.md</div>
+            <div class="schema-desc">LLM rules &amp; schema</div>
+            <div class="schema-rules">
+              <div class="schema-rule"><span>›</span>Ingest / Query / Lint ops</div>
+              <div class="schema-rule"><span>›</span>index.md · log.md upkeep</div>
+              <div class="schema-rule"><span>›</span>immutable sources · publish bridge</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- LAYER 2: WIKI -->
+        <div class="layer-panel" id="panel-wiki">
+          <div class="layer-header">
+            <div class="layer-num" id="num-wiki">2</div>
+            <div>
+              <div class="layer-name" id="lname-wiki">Wiki</div>
+              <div class="layer-sub">LLM-maintained knowledge</div>
+            </div>
+          </div>
+
+          <div class="file-card" id="wiki1">
+            <div class="fc-top">
+              <span class="fc-icon">📝</span>
+              <span class="fc-name">deferred_rendering.md</span>
+              <span class="fc-tag" id="wiki1-tag">—</span>
+            </div>
+            <div class="fc-lines">
+              <div class="fc-line" style="width: 90%"></div>
+              <div class="fc-line" style="width: 74%"></div>
+              <div class="fc-line" style="width: 85%"></div>
+            </div>
+          </div>
+
+          <div class="file-card" id="wiki2">
+            <div class="fc-top">
+              <span class="fc-icon">📝</span>
+              <span class="fc-name">cuda_memory_model.md</span>
+              <span class="fc-tag" id="wiki2-tag">—</span>
+            </div>
+            <div class="fc-lines">
+              <div class="fc-line" style="width: 78%"></div>
+              <div class="fc-line" style="width: 65%"></div>
+            </div>
+          </div>
+
+          <div class="file-card" id="wiki3">
+            <div class="fc-top">
+              <span class="fc-icon">📝</span>
+              <span class="fc-name">shader_compilation.md</span>
+              <span class="fc-tag" id="wiki3-tag">—</span>
+            </div>
+            <div class="fc-lines">
+              <div class="fc-line" style="width: 83%"></div>
+              <div class="fc-line" style="width: 68%"></div>
+              <div class="fc-line" style="width: 57%"></div>
+            </div>
+          </div>
+
+          <div class="file-card" id="wiki4">
+            <div class="fc-top">
+              <span class="fc-icon">📑</span>
+              <span class="fc-name">index.md</span>
+              <span class="fc-tag" id="wiki4-tag">—</span>
+            </div>
+            <div class="fc-lines">
+              <div class="fc-line" style="width: 92%"></div>
+              <div class="fc-line" style="width: 78%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- COMMAND BAR -->
+      <div class="cmd-bar">
+        <span class="cmd-prompt">❯</span>
+        <span class="cmd-dir">~/wiki</span>
+        <span class="cmd-text" id="cmdText"
+          >llm-wiki ingest attention_paper.pdf</span
+        >
+        <span class="cmd-cursor"></span>
+      </div>
+
+      <!-- LEGEND -->
+      <div class="legend">
+        <div class="legend-item">
+          <div class="legend-dot" style="background: var(--blue)"></div>
+          ingest flow
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background: var(--green)"></div>
+          query search
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background: var(--yellow)"></div>
+          lint/bookkeeping
+        </div>
+      </div>
+
+      <!-- PROGRESS BAR -->
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+    </div>
+
+    <!-- BOOKKEEPING LOG -->
+    <footer>
+      <div class="log-header">
+        <div class="log-dot"></div>
+        Bookkeeping Activity
+      </div>
+      <div class="log-lines" id="logLines">
+        <div class="log-line" id="ll0"></div>
+        <div class="log-line" id="ll1"></div>
+        <div class="log-line" id="ll2"></div>
+        <div class="log-line" id="ll3"></div>
+      </div>
+    </footer>
+
+    <script>
+      // ═══════════════════════════════════════════════════════
+      // CONFIG
+      // ═══════════════════════════════════════════════════════
+
+      const CYCLE_MS = 7500; // ms per mode
+      const SPAWN_MS = 380; // particle spawn interval
+      const LOG_MS = 850; // log line interval
+
+      const COLORS = {
+        ingest: [88, 166, 255],
+        query: [63, 185, 80],
+        lint: [210, 153, 34],
+      };
+
+      const MODE_CFG = {
+        ingest: {
+          label: "● INGEST",
+          cmd: "llm-wiki ingest siggraph_deferred.pdf",
+          orbStatus: "ingesting...",
+          srcHL: ["src1", "src2", "src3", "src4"],
+          wikiHL: [],
+          srcTags: {
+            src1: "reading",
+            src2: "queued",
+            src3: "queued",
+            src4: "queued",
+          },
+          wikiTags: {
+            wiki1: "updating",
+            wiki2: "updated",
+            wiki3: "—",
+            wiki4: "updated",
+          },
+          logs: [
+            "> Parsing siggraph_deferred.pdf  (6,841 tokens)",
+            "> Extracted 11 key concepts: GBuffer, tile-based, light culling...",
+            "> Updated vault/notes/deferred_rendering.md  (+4 cross-refs added)",
+            "> Linked → vault/notes/cuda_memory_model.md  (3 new citations)",
+            "> Bookkeeping: index.md refreshed, 9 refs synced  ✓",
+          ],
+          connections: [
+            { from: "src1", to: "llm-orb", type: "main" },
+            { from: "src2", to: "llm-orb", type: "dim" },
+            { from: "src3", to: "llm-orb", type: "dim" },
+            { from: "src4", to: "llm-orb", type: "dim" },
+            { from: "llm-orb", to: "wiki1", type: "main" },
+            { from: "llm-orb", to: "wiki2", type: "dim" },
+            { from: "llm-orb", to: "wiki4", type: "dim" },
+          ],
+          spawnPairs: [
+            { from: "src1", via: "llm-orb", to: "wiki1" },
+            { from: "src2", via: "llm-orb", to: "wiki2" },
+            { from: "src3", via: "llm-orb", to: "wiki4" },
+            { from: "src4", via: "llm-orb", to: "wiki1" },
+          ],
+        },
+        query: {
+          label: "● QUERY",
+          cmd: 'llm-wiki query "how does deferred rendering handle transparent objects?"',
+          orbStatus: "searching...",
+          srcHL: [],
+          wikiHL: ["wiki1", "wiki2", "wiki3", "wiki4"],
+          srcTags: {},
+          wikiTags: {
+            wiki1: "hit 0.94",
+            wiki2: "hit 0.81",
+            wiki3: "searched",
+            wiki4: "searched",
+          },
+          logs: [
+            '> Query: "how does deferred rendering handle transparent objects?"',
+            "> Scanning vault/notes/  (4 files, ~2.1k tokens)...",
+            "> Hit: deferred_rendering.md  (relevance 0.96)",
+            "> Hit: shader_compilation.md        (relevance 0.81)",
+            "> Bookkeeping: query logged to vault/log.md  ✓",
+          ],
+          connections: [
+            { from: "llm-orb", to: "wiki1", type: "main" },
+            { from: "llm-orb", to: "wiki2", type: "main" },
+            { from: "llm-orb", to: "wiki3", type: "dim" },
+            { from: "llm-orb", to: "wiki4", type: "dim" },
+          ],
+          spawnPairs: [
+            { from: "llm-orb", to: "wiki1", bounce: true },
+            { from: "llm-orb", to: "wiki2", bounce: true },
+            { from: "llm-orb", to: "wiki3", bounce: true },
+            { from: "llm-orb", to: "wiki4", bounce: true },
+          ],
+        },
+        lint: {
+          label: "● LINT",
+          cmd: "llm-wiki lint --full --fix",
+          orbStatus: "linting...",
+          srcHL: [],
+          wikiHL: ["wiki1", "wiki2", "wiki3", "wiki4"],
+          srcTags: {},
+          wikiTags: {
+            wiki1: "clean",
+            wiki2: "fixed",
+            wiki3: "⚠ fixed",
+            wiki4: "clean",
+          },
+          logs: [
+            "> Health check on vault/notes/  (4 pages, 3,120 tokens)...",
+            "> Checking cross-references and citation links...",
+            "> ⚠  Contradiction: deferred_rendering.md ↔ shader_compilation.md",
+            "> Resolved: merged 2 conflicting claims  → shader_compilation.md",
+            "> Bookkeeping: 4 pages consistent, 1 broken link fixed  ✓",
+          ],
+          connections: [
+            { from: "wiki1", to: "wiki2", type: "xref" },
+            { from: "wiki2", to: "wiki3", type: "xref" },
+            { from: "wiki1", to: "wiki3", type: "xref" },
+            { from: "wiki3", to: "wiki4", type: "xref" },
+            { from: "wiki1", to: "wiki4", type: "xref" },
+            { from: "llm-orb", to: "wiki1", type: "dim" },
+            { from: "llm-orb", to: "wiki2", type: "dim" },
+            { from: "llm-orb", to: "wiki3", type: "dim" },
+            { from: "llm-orb", to: "wiki4", type: "dim" },
+          ],
+          spawnPairs: [
+            { from: "wiki1", to: "wiki3" },
+            { from: "wiki2", to: "wiki4" },
+            { from: "wiki3", to: "wiki1" },
+            { from: "wiki4", to: "wiki2" },
+          ],
+        },
+      };
+
+      // ═══════════════════════════════════════════════════════
+      // CANVAS / PARTICLES
+      // ═══════════════════════════════════════════════════════
+
+      const canvas = document.getElementById("flow");
+      const ctx = canvas.getContext("2d");
+      let particles = [];
+      let connLines = [];
+
+      function resize() {
+        const s = document.getElementById("stage");
+        canvas.width = s.offsetWidth;
+        canvas.height = s.offsetHeight;
+      }
+
+      function elCenter(id) {
+        const el = document.getElementById(id);
+        if (!el) return null;
+        const sr = document.getElementById("stage").getBoundingClientRect();
+        const er = el.getBoundingClientRect();
+        return {
+          x: er.left - sr.left + er.width / 2,
+          y: er.top - sr.top + er.height / 2,
+        };
+      }
+
+      // ─── Particle ───
+      class Particle {
+        constructor(x1, y1, x2, y2, color, opts = {}) {
+          this.sx = x1;
+          this.sy = y1;
+          this.tx = x2;
+          this.ty = y2;
+          this.color = color;
+          this.t = 0;
+          this.speed = opts.speed || 0.012 + Math.random() * 0.006;
+          this.size = opts.size || 2.5 + Math.random() * 1.5;
+          this.trail = [];
+          this.dead = false;
+
+          // Bezier control points with some offset for visual variety
+          const dx = x2 - x1;
+          const oy = (Math.random() - 0.5) * 35;
+          this.cx1 = x1 + dx * 0.35 + oy * 0.3;
+          this.cy1 = y1 + oy;
+          this.cx2 = x1 + dx * 0.65 - oy * 0.3;
+          this.cy2 = y2 - oy;
+        }
+
+        bezier(t) {
+          const mt = 1 - t;
+          return {
+            x:
+              mt * mt * mt * this.sx +
+              3 * mt * mt * t * this.cx1 +
+              3 * mt * t * t * this.cx2 +
+              t * t * t * this.tx,
+            y:
+              mt * mt * mt * this.sy +
+              3 * mt * mt * t * this.cy1 +
+              3 * mt * t * t * this.cy2 +
+              t * t * t * this.ty,
+          };
+        }
+
+        update() {
+          this.t += this.speed;
+          if (this.t >= 1) {
+            this.dead = true;
+            return;
+          }
+          const pos = this.bezier(this.t);
+          this.trail.push({ x: pos.x, y: pos.y });
+          if (this.trail.length > 10) this.trail.shift();
+          this.x = pos.x;
+          this.y = pos.y;
+        }
+
+        draw() {
+          const [r, g, b] = this.color;
+          const alpha =
+            this.t < 0.08
+              ? this.t / 0.08
+              : this.t > 0.88
+                ? (1 - this.t) / 0.12
+                : 1;
+
+          // Trail
+          for (let i = 0; i < this.trail.length; i++) {
+            const a = (i / this.trail.length) * 0.35 * alpha;
+            const s = this.size * (i / this.trail.length) * 0.7;
+            ctx.beginPath();
+            ctx.arc(this.trail[i].x, this.trail[i].y, s, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(${r},${g},${b},${a})`;
+            ctx.fill();
+          }
+          // Glow halo
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size * 2.5, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(${r},${g},${b},${0.08 * alpha})`;
+          ctx.fill();
+          // Core
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(${r},${g},${b},${alpha})`;
+          ctx.fill();
+        }
+      }
+
+      // ─── Connection lines ───
+      function drawConnections(mode, t) {
+        const [r, g, b] = COLORS[mode];
+        const cfg = MODE_CFG[mode];
+
+        cfg.connections.forEach((conn) => {
+          const p1 = elCenter(conn.from);
+          const p2 = elCenter(conn.to);
+          if (!p1 || !p2) return;
+
+          const isXref = conn.type === "xref";
+          const alpha =
+            conn.type === "main" ? 0.22 : conn.type === "xref" ? 0.18 : 0.1;
+
+          ctx.save();
+          ctx.strokeStyle = `rgba(${r},${g},${b},${alpha})`;
+          ctx.lineWidth = conn.type === "main" ? 1.5 : 1;
+          ctx.setLineDash(isXref ? [3, 4] : [5, 5]);
+          ctx.lineDashOffset = -t * 0.025;
+          ctx.beginPath();
+          const dx = (p2.x - p1.x) * 0.35;
+          ctx.moveTo(p1.x, p1.y);
+          ctx.bezierCurveTo(p1.x + dx, p1.y, p2.x - dx, p2.y, p2.x, p2.y);
+          ctx.stroke();
+          ctx.setLineDash([]);
+          ctx.restore();
+        });
+      }
+
+      // ─── Schema connection (always visible) ───
+      function drawSchemaConn(mode) {
+        const p1 = elCenter("schema-node");
+        const p2 = elCenter("llm-orb");
+        if (!p1 || !p2) return;
+        ctx.save();
+        ctx.strokeStyle = "rgba(210,153,34,0.12)";
+        ctx.lineWidth = 1;
+        ctx.setLineDash([3, 5]);
+        ctx.beginPath();
+        ctx.moveTo(p1.x, p1.y - 10);
+        ctx.lineTo(p2.x, p2.y + 56);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.restore();
+      }
+
+      // ═══════════════════════════════════════════════════════
+      // RENDER LOOP
+      // ═══════════════════════════════════════════════════════
+      let frameT = 0;
+      let rafId = null;
+
+      function loop(ts) {
+        frameT = ts || 0;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        drawConnections(currentMode, frameT);
+        drawSchemaConn(currentMode);
+
+        particles = particles.filter((p) => {
+          p.update();
+          if (!p.dead) p.draw();
+          return !p.dead;
+        });
+
+        rafId = requestAnimationFrame(loop);
+      }
+
+      // ═══════════════════════════════════════════════════════
+      // MODE MANAGEMENT
+      // ═══════════════════════════════════════════════════════
+      let currentMode = "ingest";
+      let spawnTimer = null;
+      let logTimers = [];
+      let autoTimer = null;
+      let autoOn = true;
+      let progressTimer = null;
+      let progressStart = 0;
+      let spawnIdx = 0;
+
+      function setMode(mode) {
+        // Clear timers
+        clearInterval(spawnTimer);
+        clearInterval(progressTimer);
+        logTimers.forEach(clearTimeout);
+        logTimers = [];
+        particles = [];
+        spawnIdx = 0;
+
+        currentMode = mode;
+        const cfg = MODE_CFG[mode];
+        const [r, g, b] = COLORS[mode];
+
+        // ── Buttons
+        document.querySelectorAll(".op-btn").forEach((btn) => {
+          btn.classList.remove("active");
+        });
+        document
+          .querySelector(`.op-btn[data-mode="${mode}"]`)
+          .classList.add("active");
+
+        // ── Mode indicator
+        const mi = document.getElementById("modeIndicator");
+        mi.textContent = cfg.label;
+        mi.className = `mode-indicator ${mode}`;
+
+        // ── Orb status
+        document.getElementById("orb-status").textContent = cfg.orbStatus;
+        document.getElementById("orb-status").style.color =
+          `rgb(${r},${g},${b})`;
+
+        // ── Command bar
+        document.getElementById("cmdText").textContent = cfg.cmd;
+
+        // ── Reset all cards
+        const allCards = [
+          "src1",
+          "src2",
+          "src3",
+          "src4",
+          "wiki1",
+          "wiki2",
+          "wiki3",
+          "wiki4",
+        ];
+        allCards.forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) el.className = "file-card";
+        });
+
+        // ── Highlight active cards
+        cfg.srcHL.forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) el.className = `file-card hl-${mode}`;
+        });
+        cfg.wikiHL.forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) el.className = `file-card hl-${mode}`;
+        });
+
+        // ── Update tags
+        Object.entries(cfg.srcTags).forEach(([id, text]) => {
+          const el = document.getElementById(`${id}-tag`);
+          if (el) el.textContent = text;
+        });
+        Object.entries(cfg.wikiTags).forEach(([id, text]) => {
+          const el = document.getElementById(`${id}-tag`);
+          if (el) el.textContent = text;
+        });
+
+        // Reset unmentioned tags
+        ["src1", "src2", "src3", "src4"].forEach((id) => {
+          if (!cfg.srcTags[id]) {
+            const el = document.getElementById(`${id}-tag`);
+            if (el) el.textContent = "—";
+          }
+        });
+        ["wiki1", "wiki2", "wiki3", "wiki4"].forEach((id) => {
+          if (!cfg.wikiTags[id]) {
+            const el = document.getElementById(`${id}-tag`);
+            if (el) el.textContent = "—";
+          }
+        });
+
+        // ── Layer header colors
+        const lnSrc = document.getElementById("lname-src");
+        const lnWiki = document.getElementById("lname-wiki");
+        const nmSrc = document.getElementById("num-src");
+        const nmWiki = document.getElementById("num-wiki");
+
+        if (mode === "ingest") {
+          lnSrc.style.color = `rgb(${r},${g},${b})`;
+          lnWiki.style.color = "";
+          nmSrc.style.borderColor = `rgba(${r},${g},${b},0.5)`;
+          nmSrc.style.color = `rgb(${r},${g},${b})`;
+          nmWiki.style.borderColor = "";
+          nmWiki.style.color = "";
+        } else {
+          lnSrc.style.color = "";
+          lnWiki.style.color = `rgb(${r},${g},${b})`;
+          nmSrc.style.borderColor = "";
+          nmSrc.style.color = "";
+          nmWiki.style.borderColor = `rgba(${r},${g},${b},0.5)`;
+          nmWiki.style.color = `rgb(${r},${g},${b})`;
+        }
+
+        // ── Bookkeeping log
+        const logContainer = document.getElementById("logLines");
+        for (let i = 0; i < 4; i++) {
+          const el = document.getElementById(`ll${i}`);
+          el.className = "log-line";
+          el.textContent = "";
+        }
+        cfg.logs.slice(0, 4).forEach((line, i) => {
+          const delay = i * LOG_MS + 200;
+          const t = setTimeout(() => {
+            const el = document.getElementById(`ll${i}`);
+            if (el) {
+              el.textContent = line;
+              el.className = `log-line ${mode} show`;
+            }
+          }, delay);
+          logTimers.push(t);
+        });
+
+        // ── Progress bar
+        const fill = document.getElementById("progressFill");
+        fill.style.width = "0%";
+        fill.style.background = `rgb(${r},${g},${b})`;
+        fill.style.opacity = "0.5";
+        progressStart = Date.now();
+        progressTimer = setInterval(() => {
+          const elapsed = Date.now() - progressStart;
+          const pct = Math.min((elapsed / CYCLE_MS) * 100, 100);
+          fill.style.width = pct + "%";
+        }, 50);
+
+        // ── Spawn particles
+        const pairs = cfg.spawnPairs;
+        spawnTimer = setInterval(() => {
+          const pair = pairs[spawnIdx % pairs.length];
+          spawnIdx++;
+
+          if (pair.via) {
+            // Two-hop: src → llm → wiki
+            const s = elCenter(pair.from);
+            const l = elCenter(pair.via);
+            const w = elCenter(pair.to);
+            if (s && l)
+              particles.push(new Particle(s.x, s.y, l.x, l.y, COLORS[mode]));
+            if (l && w)
+              setTimeout(() => {
+                if (currentMode === mode)
+                  particles.push(
+                    new Particle(l.x, l.y, w.x, w.y, COLORS[mode]),
+                  );
+              }, 550);
+          } else if (pair.bounce) {
+            // LLM → wiki → LLM (query search)
+            const l = elCenter(pair.from);
+            const w = elCenter(pair.to);
+            if (l && w) {
+              particles.push(
+                new Particle(l.x, l.y, w.x, w.y, COLORS[mode], {
+                  speed: 0.015,
+                }),
+              );
+              setTimeout(() => {
+                if (currentMode === mode)
+                  particles.push(
+                    new Particle(w.x, w.y, l.x, l.y, COLORS[mode], {
+                      speed: 0.013,
+                      size: 2,
+                    }),
+                  );
+              }, 450);
+            }
+          } else {
+            // Direct flow
+            const p1 = elCenter(pair.from);
+            const p2 = elCenter(pair.to);
+            if (p1 && p2)
+              particles.push(
+                new Particle(p1.x, p1.y, p2.x, p2.y, COLORS[mode]),
+              );
+          }
+        }, SPAWN_MS);
+      }
+
+      // ═══════════════════════════════════════════════════════
+      // AUTO-CYCLE
+      // ═══════════════════════════════════════════════════════
+      const ORDER = ["ingest", "query", "lint"];
+      let autoIdx = 0;
+
+      function scheduleNext() {
+        autoTimer = setTimeout(() => {
+          if (!autoOn) return;
+          autoIdx = (autoIdx + 1) % 3;
+          setMode(ORDER[autoIdx]);
+          scheduleNext();
+        }, CYCLE_MS);
+      }
+
+      function toggleAuto() {
+        autoOn = !autoOn;
+        const badge = document.getElementById("autoBadge");
+        if (autoOn) {
+          badge.textContent = "AUTO ●";
+          badge.classList.add("on");
+          scheduleNext();
+        } else {
+          badge.textContent = "AUTO ○";
+          badge.classList.remove("on");
+          clearTimeout(autoTimer);
+        }
+      }
+
+      // ═══════════════════════════════════════════════════════
+      // INIT
+      // ═══════════════════════════════════════════════════════
+      window.addEventListener("load", () => {
+        resize();
+        loop();
+        setTimeout(() => {
+          setMode("ingest");
+          scheduleNext();
+        }, 350);
+      });
+
+      window.addEventListener("resize", () => {
+        resize();
+        particles = [];
+      });
+    </script>
+  </body>
+</html>
