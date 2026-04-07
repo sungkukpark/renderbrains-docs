@@ -1,0 +1,19 @@
+---
+title: "Architecture"
+description: "Internal systems, design patterns, and subsystem overviews for the RenderBrains engine."
+listing:
+  contents: "*.qmd"
+  exclude:
+    filename: "index.qmd"
+  type: default
+  sort: "title asc"
+  fields: [title, description, date]
+---
+
+Deep-dive documentation on the RenderBrains rendering engine internals: frame graphs, memory models, pipeline stages, and system interactions.
+
+---
+
+::: {.callout-note}
+Architecture docs are published from `vault/` via `make sync`. To contribute, create a note in `vault/notes/` with `category: "architecture"` and `publish: true`.
+:::

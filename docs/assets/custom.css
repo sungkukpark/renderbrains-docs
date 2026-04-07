@@ -1,0 +1,26 @@
+/* RenderBrains Docs — custom stylesheet */
+
+/* Brand accent color overrides (cosmo/darkly theme) */
+:root {
+  --rb-accent: #e04a1a;
+}
+
+/* Navbar logo sizing */
+.navbar-brand img {
+  max-height: 28px;
+}
+
+/* Tighten up the TOC font size */
+#TOC {
+  font-size: 0.875rem;
+}
+
+/* Code blocks: slightly tighter line height */
+pre > code {
+  line-height: 1.5;
+}
+
+/* Callout note styling */
+.callout-note {
+  border-left-color: var(--rb-accent);
+}

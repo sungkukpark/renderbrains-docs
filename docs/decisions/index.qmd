@@ -1,0 +1,21 @@
+---
+title: "Decisions"
+description: "Architecture Decision Records (ADRs) for RenderBrains."
+listing:
+  contents: "*.qmd"
+  exclude:
+    filename: "index.qmd"
+  type: default
+  sort: "date desc"
+  fields: [title, description, date]
+---
+
+Architecture Decision Records (ADRs) documenting significant technical choices: what was decided, why, and what alternatives were considered.
+
+ADRs are immutable once merged. Superseded decisions are marked `archived` and linked to their replacement.
+
+---
+
+::: {.callout-note}
+Decisions are published from `vault/` via `make sync`. To log a new decision, create a note in `vault/` with `category: "decisions"`, `type: "decision"`, and `publish: true`.
+:::

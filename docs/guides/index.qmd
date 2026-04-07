@@ -1,0 +1,19 @@
+---
+title: "Guides"
+description: "Step-by-step tutorials and how-to documentation for RenderBrains."
+listing:
+  contents: "*.qmd"
+  exclude:
+    filename: "index.qmd"
+  type: default
+  sort: "title asc"
+  fields: [title, description, date]
+---
+
+Practical guides for working with RenderBrains: setup, integration, workflows, and feature walkthroughs.
+
+---
+
+::: {.callout-note}
+Guides are published from `vault/` via `make sync`. To contribute a guide, create a note in `vault/notes/` or `vault/projects/` with `category: "guides"` and `publish: true`.
+:::

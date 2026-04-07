@@ -1,0 +1,64 @@
+project:
+  type: website
+  output-dir: _site
+
+website:
+  title: "RenderBrains Docs"
+  description: "Official documentation and knowledge base for RenderBrains."
+  site-url: "https://docs.renderbrains.com"
+  repo-url: "https://github.com/renderbrains/renderbrains-docs"
+  repo-actions: [edit, issue]
+  favicon: docs/assets/favicon.ico
+  open-graph: true
+
+  navbar:
+    background: dark
+    foreground: light
+    logo: docs/assets/logo.svg
+    logo-alt: "RenderBrains"
+    left:
+      - href: docs/index.qmd
+        text: Home
+      - href: docs/guides/index.qmd
+        text: Guides
+      - href: docs/architecture/index.qmd
+        text: Architecture
+      - href: docs/references/index.qmd
+        text: References
+      - href: docs/decisions/index.qmd
+        text: Decisions
+    right:
+      - icon: github
+        href: https://github.com/renderbrains/renderbrains-docs
+        aria-label: GitHub
+
+  sidebar: false
+
+  page-footer:
+    left: |
+      &copy; RenderBrains. Built with [Quarto](https://quarto.org).
+    right:
+      - icon: github
+        href: https://github.com/renderbrains/renderbrains-docs
+
+  search:
+    location: navbar
+    type: overlay
+
+format:
+  html:
+    theme:
+      light: cosmo
+      dark: darkly
+    toc: true
+    toc-depth: 3
+    toc-title: "On this page"
+    number-sections: false
+    smooth-scroll: true
+    code-copy: true
+    code-overflow: wrap
+    highlight-style: github
+    css: docs/assets/custom.css
+
+execute:
+  freeze: true

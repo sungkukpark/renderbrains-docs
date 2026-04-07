@@ -1,0 +1,57 @@
+# Claude Code local settings
+.claude/
+
+# Temp / session files
+message.txt
+
+# Quarto build output
+_site/
+.quarto/
+/.quarto
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+env/
+
+# Local temp outputs
+tmp/
+*.tmp
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+*~
+
+# Obsidian workspace files (personal, not shared)
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.obsidian/graph.json
+
+# Keep .obsidian/ config (plugins, appearance) but ignore personal state
+# Uncomment the next line to also ignore all Obsidian config:
+# .obsidian/
+
+# Quarto freeze cache (keep if you want reproducible frozen outputs)
+# _freeze/
+
+# Node (if any JS tooling is added later)
+node_modules/
+
+/.quarto/
+**/*.quarto_ipynb

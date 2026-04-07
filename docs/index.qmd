@@ -1,0 +1,42 @@
+---
+title: "RenderBrains Documentation"
+description: "Official knowledge base for the RenderBrains rendering engine and toolset."
+---
+
+Welcome to the **RenderBrains** documentation.
+
+RenderBrains is a real-time rendering engine and toolset built for high-performance graphics. This site is the team's shared, versioned knowledge base — covering architecture decisions, developer guides, and technical references.
+
+---
+
+## Sections
+
+::: {.grid}
+
+::: {.g-col-12 .g-col-md-6}
+### [Guides](guides/index.qmd)
+Step-by-step tutorials and how-to documentation for working with RenderBrains tools and workflows.
+:::
+
+::: {.g-col-12 .g-col-md-6}
+### [Architecture](architecture/index.qmd)
+Detailed explanations of the rendering engine's internal systems, design patterns, and subsystem interactions.
+:::
+
+::: {.g-col-12 .g-col-md-6}
+### [References](references/index.qmd)
+API references, configuration schemas, enumeration tables, and lookup material.
+:::
+
+::: {.g-col-12 .g-col-md-6}
+### [Decisions](decisions/index.qmd)
+Architecture Decision Records (ADRs) tracking significant technical choices and their rationale.
+:::
+
+:::
+
+---
+
+## Contributing
+
+Documentation is authored in Obsidian (`vault/`) and published via Quarto (`docs/`). See the [README](https://github.com/renderbrains/renderbrains-docs#contributing) for the full authoring workflow.
