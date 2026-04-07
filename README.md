@@ -4,11 +4,11 @@ Official documentation and knowledge base for [RenderBrains](https://renderbrain
 
 Built on **Obsidian + Quarto + Python CLI**:
 
-- `vault/` — internal authoring space (Obsidian)
-- `docs/` — publishable documentation (Quarto/QMD)
+- `vault/` — personal wiki and authoring space (Obsidian)
+- `guides/`, `architecture/`, `references/`, `decisions/` — published site content (Quarto/QMD)
 - `scripts/` — sync, lint, and build automation
 
-The published site is available at **[docs.renderbrains.com](https://docs.renderbrains.com)**.
+The published site is available at **[renderbrains.com](https://renderbrains.com)**.
 
 ---
 
@@ -39,7 +39,7 @@ This runs `sync → lint → build` in sequence. All three must pass before comm
 ### Individual commands
 
 ```bash
-make sync      # vault/ → docs/ conversion
+make sync      # vault/ → site content conversion
 make lint      # validate frontmatter and links
 make build     # quarto render → _site/
 make preview   # quarto preview (live reload)
@@ -52,30 +52,34 @@ make clean     # remove _site/ and __pycache__
 
 ```
 renderbrains-docs/
-├── vault/                  # Obsidian authoring area (author here first)
-│   ├── inbox/              # Quick capture — never published directly
-│   ├── notes/              # Evergreen concept notes
-│   ├── projects/           # Project-specific working notes
-│   ├── daily/              # Daily notes — not published by default
-│   ├── people/             # People / meeting context
+├── index.qmd               # Home page
+├── guides/                 # Step-by-step documentation
+├── architecture/           # Engine internals and design
+├── references/             # API references and lookup material
+├── decisions/              # Architecture Decision Records
+├── assets/                 # Site assets (logo, CSS, favicon)
+│
+├── vault/                  # Obsidian personal wiki (author here)
+│   ├── index.md            # Wiki page catalog (LLM-maintained)
+│   ├── log.md              # Operation log (append-only)
+│   ├── inbox/              # Quick capture — never published
+│   ├── notes/              # Evergreen concept notes (LLM-maintained)
+│   ├── projects/           # Project working notes
+│   ├── daily/              # Daily notes — not published
+│   ├── people/             # People and meeting context
 │   ├── references/         # Raw reference notes
 │   ├── assets/             # Images, diagrams, attachments
 │   └── templates/          # Note templates
 │
-├── docs/                   # Published documentation (Quarto)
-│   ├── index.qmd
-│   ├── guides/
-│   ├── architecture/
-│   ├── references/
-│   └── decisions/
-│
 ├── scripts/
-│   ├── sync.py             # vault → docs sync
+│   ├── sync.py             # vault/ → site content sync
 │   ├── lint.py             # metadata and link validation
 │   └── utils/
 │       └── frontmatter.py  # shared parsing utilities
 │
 ├── _quarto.yml             # Quarto site configuration
+├── CLAUDE.md               # Publishing rules and contract
+├── ARCHITECT.md            # LLM wiki operating pattern
 ├── pyproject.toml          # Python dependencies
 ├── Makefile                # Convenience commands
 └── .github/workflows/      # CI/CD
@@ -85,9 +89,9 @@ renderbrains-docs/
 
 ## Authoring Workflow
 
-### 1. Create a note in vault/
+### 1. Work in vault/
 
-Write freely in Obsidian. Use wiki links (`[[Title]]`), daily notes, and inbox capture without concern for publish format.
+Write freely in Obsidian. Use wiki links (`[[Title]]`), daily notes, and inbox capture without concern for publish format. See `ARCHITECT.md` for the LLM wiki workflow (Ingest / Query / Lint).
 
 ### 2. Mark a note for publishing
 
@@ -124,7 +128,7 @@ make sync
 The sync script:
 - Finds all `publish: true` notes in `vault/`
 - Converts `[[wiki links]]` to relative Quarto links
-- Copies output to `docs/{category}/{slug}.qmd`
+- Copies output to `{category}/{slug}.qmd`
 - Warns on Obsidian-specific syntax that cannot be rendered cleanly
 - **Fails loudly** on ambiguous links (same title, multiple notes)
 
@@ -151,7 +155,7 @@ make build     # full render to _site/
 ### 6. Commit and PR
 
 - Direct commits allowed in `vault/inbox/`
-- PR required for `docs/`, `scripts/`, `_quarto.yml`, CI files
+- PR required for site content, `scripts/`, `_quarto.yml`, CI files
 - CI runs `sync → lint → build` on every PR
 
 ---
@@ -173,8 +177,8 @@ Notes in `vault/inbox/` and `vault/daily/` are **never published**.
 
 | Context | Format |
 |---|---|
-| Authoring in vault/ | `[[Frame Graph]]` |
-| Published in docs/ | `[Frame Graph](../architecture/frame-graph.qmd)` |
+| Authoring in `vault/` | `[[Frame Graph]]` |
+| Published in site | `[Frame Graph](../architecture/frame-graph.qmd)` |
 
 The sync script converts wiki links automatically. Do not manually maintain both forms in the same source note.
 
@@ -186,13 +190,13 @@ The sync script converts wiki links automatically. Do not manually maintain both
 2. Author in `vault/`
 3. Run `make check` — all three steps must pass
 4. Open a PR with the [PR template](.github/pull_request_template.md)
-5. At least one team review required for changes to `docs/`, `scripts/`, or `_quarto.yml`
+5. At least one team review required for changes to site content, `scripts/`, or `_quarto.yml`
 
 ---
 
 ## CI/CD
 
-- **CI** runs on every PR touching `docs/`, `vault/`, `scripts/`, or `_quarto.yml`
-- **Publish** runs on merge to `main`, deploying to GitHub Pages (or Cloudflare Pages)
+- **CI** runs on every PR touching site content, `vault/`, `scripts/`, or `_quarto.yml`
+- **Publish** runs on merge to `main`, deploying to AWS S3 (`renderbrains.com`)
 
 See `.github/workflows/` for details.
