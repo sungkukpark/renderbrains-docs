@@ -4,7 +4,8 @@ Official documentation and knowledge base for [RenderBrains](https://renderbrain
 
 Built on **Obsidian + Quarto + Python CLI**:
 
-- `vault/` — personal wiki and authoring space (Obsidian)
+- `vault/` — personal Obsidian workspace (local only, gitignored)
+- `wiki/` — LLM-synthesized knowledge pages (git-tracked)
 - `tutorials/`, `how-to/`, `reference/`, `explanation/` — published site content (Quarto/QMD)
 - `scripts/` — sync, lint, and build automation
 
@@ -39,7 +40,7 @@ This runs `sync → lint → build` in sequence. All three must pass before comm
 ### Individual commands
 
 ```bash
-make sync      # vault/ → site content conversion
+make sync      # wiki/ → site content conversion
 make lint      # validate frontmatter and links
 make build     # quarto render → _site/
 make preview   # quarto preview (live reload)
@@ -59,20 +60,19 @@ renderbrains-docs/
 ├── explanation/            # Concepts, architecture, ADRs
 ├── assets/                 # Site assets (logo, CSS, favicon)
 │
-├── vault/                  # Obsidian personal wiki (author here)
-│   ├── index.md            # Wiki page catalog (LLM-maintained)
+├── wiki/                   # LLM-maintained knowledge pages (git-tracked)
+│   ├── index.md            # Wiki page catalog
 │   ├── log.md              # Operation log (append-only)
+│   └── *.md                # Synthesized knowledge pages
+│
+├── vault/                  # Personal Obsidian workspace (local only, gitignored)
 │   ├── inbox/              # Quick capture — never published
-│   ├── notes/              # Evergreen concept notes (LLM-maintained)
-│   ├── projects/           # Project working notes
-│   ├── daily/              # Daily notes — not published
-│   ├── people/             # People and meeting context
-│   ├── references/         # Raw reference notes
-│   ├── assets/             # Images, diagrams, attachments
-│   └── templates/          # Note templates
+│   ├── references/         # Raw reference notes (immutable)
+│   ├── daily/              # Daily notes
+│   └── assets/             # Images, diagrams, attachments
 │
 ├── scripts/
-│   ├── sync.py             # vault/ → site content sync
+│   ├── sync.py             # wiki/ → site content sync
 │   ├── lint.py             # metadata and link validation
 │   └── utils/
 │       └── frontmatter.py  # shared parsing utilities
@@ -87,17 +87,120 @@ renderbrains-docs/
 
 ---
 
-## Authoring Workflow
+## Writing Notes in Obsidian
 
-### 1. Work in vault/
+### Where to write
 
-Write freely in Obsidian. Use wiki links (`[[Title]]`), daily notes, and inbox capture without concern for publish format. See `ARCHITECT.md` for the LLM wiki workflow (Ingest / Query / Lint).
+| Location | Purpose | Git-tracked |
+|---|---|---|
+| `vault/inbox/` | Quick capture, raw ideas | No |
+| `vault/references/` | External source notes | No |
+| `vault/daily/` | Daily notes | No |
+| `wiki/` | Refined knowledge pages ready to publish | Yes |
 
-### 2. Mark a note for publishing
+Write freely in `vault/` using any Obsidian feature. When a note is ready to share with the team or publish to the site, move it to `wiki/` and add the required frontmatter.
 
-Add or update the frontmatter:
+### Required frontmatter
+
+Every note in `wiki/` that should be published must include:
 
 ```yaml
+---
+title: "Frame Graph"
+slug: "frame-graph"
+publish: true
+category: "explanation"
+status: "stable"
+updated: 2026-04-06
+---
+```
+
+| Field | Required | Description |
+|---|---|---|
+| `title` | Yes | Human-readable title |
+| `slug` | Yes | URL-safe identifier (lowercase, kebab-case) |
+| `publish` | Yes | Set to `true` to publish |
+| `category` | Yes | One of the four allowed values below |
+| `status` | Yes | One of the four allowed values below |
+| `updated` | Yes | Last modified date (`YYYY-MM-DD`) |
+| `summary` | No | One-sentence description shown in listings |
+| `tags` | No | List of topic tags |
+| `owner` | No | Responsible team or person |
+
+**Allowed `category` values:**
+
+| Value | Output folder | Use for |
+|---|---|---|
+| `tutorials` | `tutorials/` | Step-by-step learning guides |
+| `how-to` | `how-to/` | Task-specific recipes |
+| `reference` | `reference/` | API docs, config schemas, lookup tables |
+| `explanation` | `explanation/` | Concepts, architecture, ADRs |
+
+**Allowed `status` values:** `draft`, `review`, `stable`, `archived`
+
+### Slug rules
+
+- Lowercase, kebab-case, ASCII only
+- Must be unique across all published notes
+- Used as the output filename: `slug: "frame-graph"` → `explanation/frame-graph.qmd`
+- Do not change a published slug casually — it breaks existing links
+
+### Wiki links
+
+Use Obsidian wiki links freely inside `vault/` and `wiki/`:
+
+```md
+See also [[Frame Graph]] and [[Shader Compilation Pipeline|shader pipeline]].
+```
+
+The sync script resolves these to proper relative links automatically:
+
+```md
+See also [Frame Graph](../explanation/frame-graph.qmd) and [shader pipeline](../how-to/shader-compilation-pipeline.qmd).
+```
+
+**Rules:**
+- If the link target has no matching note → warning, rendered as plain text
+- If the link target matches multiple published notes → **sync fails** (ambiguous link; fix by giving notes unique titles)
+- If the link target exists but `publish: false` → warning, rendered as plain text
+
+### Image embeds
+
+Obsidian image embeds are converted to Markdown image syntax:
+
+```md
+![[20260406-frame-graph-overview.png]]
+→ ![20260406-frame-graph-overview.png](../assets/20260406-frame-graph-overview.png)
+```
+
+Place all images in `vault/assets/`. The sync script copies referenced assets to the publish output automatically.
+
+**Naming convention for assets:** `YYYYMMDD-short-description.ext`
+
+### Note embeds (not supported)
+
+Obsidian note embeds (`![[SomeNote]]`) cannot be rendered in Quarto. The sync script replaces them with an HTML comment and prints a warning:
+
+```html
+<!-- EMBED: SomeNote (not rendered in published output) -->
+```
+
+Remove or rewrite note embeds before setting `publish: true`.
+
+### Obsidian features that do not sync
+
+| Feature | Behavior |
+|---|---|
+| Note embeds `![[Note]]` | Replaced with HTML comment — rewrite manually |
+| Block references `![[Note#^block]]` | Not supported — rewrite manually |
+| Dataview queries | Not rendered — remove before publishing |
+| Canvas files | Not published |
+| Callouts `> [!note]` | Supported in Quarto — sync preserves them |
+| Fenced code blocks | Fully preserved |
+
+### Full example note
+
+```md
 ---
 title: "Frame Graph"
 slug: "frame-graph"
@@ -111,50 +214,66 @@ updated: 2026-04-06
 owner: "graphics-team"
 summary: "Overview of frame graph motivation, structure, and scheduling model."
 ---
+
+# Frame Graph
+
+A frame graph organizes render passes and resource lifetimes explicitly.
+
+See also [[Deferred Rendering Overview]] and [[Shader Compilation Pipeline]].
+
+## Why it matters
+
+- Makes dependencies visible
+- Enables transient resource reuse
+- Improves scheduling clarity
+
+![[20260406-frame-graph-overview.png]]
 ```
 
-**Required fields:** `title`, `slug`, `publish`, `category`, `status`, `updated`
+---
 
-**Allowed `status` values:** `draft`, `review`, `stable`, `archived`
+## Publishing Workflow
 
-**Allowed `category` values:** `architecture`, `guides`, `references`, `decisions`, `reports`
+### 1. Author in vault/ or wiki/
 
-### 3. Run sync
+Write freely in `vault/`. When a note is stable enough to publish, place it in `wiki/` with the required frontmatter.
+
+### 2. Run sync
 
 ```bash
 make sync
 ```
 
 The sync script:
-- Finds all `publish: true` notes in `vault/`
+- Finds all `publish: true` notes in `wiki/`
 - Converts `[[wiki links]]` to relative Quarto links
 - Copies output to `{category}/{slug}.qmd`
-- Warns on Obsidian-specific syntax that cannot be rendered cleanly
-- **Fails loudly** on ambiguous links (same title, multiple notes)
+- Copies referenced assets to `assets/`
+- **Fails loudly** on ambiguous links or missing required fields
 
-### 4. Run lint
+### 3. Run lint
 
 ```bash
 make lint
 ```
 
 Validates:
-- Required frontmatter fields present
-- `status` and `category` values are valid
-- `updated` date is valid ISO format
-- Slug uniqueness across all output files
-- No unresolved `[[wiki links]]` in published output
+- Required frontmatter fields present and valid
+- `status` and `category` values allowed
+- `updated` date is valid ISO format (`YYYY-MM-DD`)
+- Slug uniqueness across all published output
+- No unresolved wiki links remaining in published files
 
-### 5. Build and preview
+### 4. Build and preview
 
 ```bash
 make preview   # live preview at localhost:4200
 make build     # full render to _site/
 ```
 
-### 6. Commit and PR
+### 5. Commit and PR
 
-- Direct commits allowed in `vault/inbox/`
+- Direct commits allowed in `wiki/` for minor updates
 - PR required for site content, `scripts/`, `_quarto.yml`, CI files
 - CI runs `sync → lint → build` on every PR
 
@@ -166,37 +285,25 @@ A note is publishable only when:
 
 1. `publish: true` is set
 2. All required frontmatter fields are present and valid
-3. `make sync` succeeds without errors
+3. `make sync` completes without errors
 4. `make lint` exits 0
 
-Notes in `vault/inbox/` and `vault/daily/` are **never published**.
-
----
-
-## Link Rules
-
-| Context | Format |
-|---|---|
-| Authoring in `vault/` | `[[Frame Graph]]` |
-| Published in site | `[Frame Graph](../explanation/frame-graph.qmd)` |
-
-The sync script converts wiki links automatically. Do not manually maintain both forms in the same source note.
+Notes in `vault/inbox/` and `vault/daily/` are **never published**, even with `publish: true`.
 
 ---
 
 ## Contributing
 
 1. Branch from `main`: `git checkout -b docs/your-topic`
-2. Author in `vault/`
+2. Author in `vault/`, refine in `wiki/`
 3. Run `make run` — all three steps must pass
-4. Open a PR with the [PR template](.github/pull_request_template.md)
-5. At least one team review required for changes to site content, `scripts/`, or `_quarto.yml`
+4. Open a PR; at least one team review required for changes to site content, `scripts/`, or `_quarto.yml`
 
 ---
 
 ## CI/CD
 
-- **CI** runs on every PR touching site content, `vault/`, `scripts/`, or `_quarto.yml`
+- **CI** runs on every PR touching `wiki/`, site content folders, `scripts/`, or `_quarto.yml`
 - **Publish** runs on merge to `main`, deploying to AWS S3 (`renderbrains.com`)
 
 See `.github/workflows/` for details.
