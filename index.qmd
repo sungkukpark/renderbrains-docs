@@ -1,67 +1,67 @@
 ---
-title: "RenderBrains 문서"
-description: "RenderBrains 렌더링 엔진 및 툴셋의 공식 지식 베이스."
+title: "RenderBrains Docs"
+description: "Official knowledge base for the RenderBrains rendering engine and toolset."
 ---
 
-**RenderBrains** 문서에 오신 것을 환영합니다.
+Welcome to the **RenderBrains** documentation.
 
-RenderBrains는 고성능 그래픽을 위한 실시간 렌더링 엔진 및 툴셋이다. 이 사이트는 팀의 공유 지식 베이스로, 아키텍처 결정, 개발 가이드, 기술 레퍼런스를 포함한다.
+RenderBrains is a real-time rendering engine and toolset for high-performance graphics. This site serves as the team's shared knowledge base, covering architecture decisions, development guides, and technical references.
 
 ---
 
-## 지식 유형
+## Knowledge Types
 
 ::: {.text-muted style="font-size:0.8rem; margin-bottom:0.75rem;"}
-섹션 구분은 [Diátaxis](https://diataxis.fr/) 지식 프레임워크를 참조했다.
+Section structure follows the [Diátaxis](https://diataxis.fr/) knowledge framework.
 :::
 
 ::: {.grid}
 
 ::: {.g-col-12 .g-col-md-6}
 ### [Tutorials](tutorials/index.qmd)
-처음 배우는 사람을 위한 단계별 학습 가이드. RenderBrains의 핵심 개념과 워크플로우를 순서대로 익힌다.
+Step-by-step learning guides for newcomers. Walk through core concepts and workflows in sequence.
 :::
 
 ::: {.g-col-12 .g-col-md-6}
 ### [How-To](how-to/index.qmd)
-특정 작업을 완료하기 위한 실용적인 레시피. 목표가 명확할 때 바로 찾아보는 문서.
+Practical recipes for completing specific tasks. Look here when you know what you want to achieve.
 :::
 
 ::: {.g-col-12 .g-col-md-6}
 ### [Reference](reference/index.qmd)
-API, 설정 스키마, 열거값 등 작업 중 조회하는 기술 레퍼런스.
+Technical reference for APIs, configuration schemas, and enumerated values to consult while working.
 :::
 
 ::: {.g-col-12 .g-col-md-6}
 ### [Explanation](explanation/index.qmd)
-렌더링 엔진의 내부 구조, 설계 원리, Architecture Decision Records (ADR).
+Internal architecture, design principles, and Architecture Decision Records (ADRs).
 :::
 
 :::
 
 ---
 
-## LLM 위키 패턴
+## LLM Wiki Pattern
 
-이 지식 베이스의 구조와 운영 방식은 [Andrej Karpathy의 LLM Wiki 패턴](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f)을 기반으로 한다.
+The structure and operation of this knowledge base is based on [Andrej Karpathy's LLM Wiki Pattern](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f).
 
-#### 3개의 레이어(Layers)
+#### 3 Layers
 
-| 레이어 | 한국어 번역 | 위치 | 담당 |
-|---|---|---|---|
-| **Raw Sources** | 원본 자료 | `vault/` *(로컬 전용, gitignore)* | 인간 |
-| **The Wiki** | 지식 저장소 | `wiki/` *(git 추적)* | LLM |
-| **The Schema** | 운영 규칙 | `CLAUDE.md`, `ARCHITECT.md` | 공동 |
+| Layer | Location | Owner |
+|---|---|---|
+| **Raw Sources** | `vault/` *(local only, gitignore)* | Human |
+| **The Wiki** | `wiki/` *(git-tracked)* | LLM |
+| **The Schema** | `CLAUDE.md`, `ARCHITECT.md` | Shared |
 
-Raw Sources는 불변이다 — LLM은 읽기만 하고 수정하지 않는다. Wiki는 LLM이 소유하는 합성 레이어로, git으로 추적되며 소스가 쌓일수록 지식이 누적된다.
+Raw Sources are immutable — the LLM reads them but never modifies them. The Wiki is the LLM-owned synthesis layer, tracked in git, growing richer as sources accumulate.
 
-#### 3가지 연산(Operations)
+#### 3 Operations
 
-**Ingest** — 새 소스를 wiki에 통합한다. 관련 페이지를 업데이트하고, `wiki/index.md`를 갱신하며, `wiki/log.md`에 기록을 추가한다.
+**Ingest** — Integrate new sources into the wiki. Update relevant pages, refresh `wiki/index.md`, and append a record to `wiki/log.md`.
 
-**Query** — 축적된 wiki 지식을 바탕으로 답변을 합성한다. 가치 있는 답변은 새 wiki 페이지로 저장되어 지식 베이스가 계속 성장한다.
+**Query** — Synthesize answers from accumulated wiki knowledge. Valuable answers are saved as new wiki pages, allowing the knowledge base to keep growing.
 
-**Lint** — wiki 상태를 점검한다. 모순, 고아 페이지, 끊긴 링크, 오래된 내용을 탐지하고 보고한다.
+**Lint** — Audit wiki health. Detect and report contradictions, orphaned pages, broken links, and stale content.
 
 <br>
 
@@ -69,17 +69,17 @@ Raw Sources는 불변이다 — LLM은 읽기만 하고 수정하지 않는다. 
 <iframe src="preview.html" width="100%" height="700px" style="border:none; border-radius:6px;"></iframe>
 ```
 
-## 설치 방법
+## Installation
 
-**1. Quarto 설치**
+**1. Install Quarto**
 
-[quarto.org/docs/get-started](https://quarto.org/docs/get-started/) 에서 운영체제에 맞는 인스톨러를 다운로드한다. v1.4 이상 필요.
+Download the installer for your OS from [quarto.org/docs/get-started](https://quarto.org/docs/get-started/). Requires v1.4 or later.
 
 ```bash
-quarto --version  # 설치 확인
+quarto --version  # verify installation
 ```
 
-**2. uv 설치** (Python 패키지 관리자)
+**2. Install uv** (Python package manager)
 
 ```bash
 # macOS / Linux
@@ -89,7 +89,7 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
 ```
 
-**3. 저장소 클론 및 의존성 설치**
+**3. Clone the repository and install dependencies**
 
 ```bash
 git clone https://github.com/sungkukpark/renderbrains-docs.git
@@ -97,26 +97,26 @@ cd renderbrains-docs
 uv sync
 ```
 
-**4. 전체 파이프라인 실행**
+**4. Run the full pipeline**
 
 ```bash
-make run   # sync → lint → build 순서로 실행
+make run   # runs sync → lint → build in sequence
 ```
 
-세 단계 모두 통과하면 정상 상태다. `main` 브랜치 커밋 전에 반드시 통과해야 한다.
+All three stages must pass before committing to `main`.
 
-**개별 명령어**
+**Individual commands**
 
 ```bash
-make sync      # vault/ → 사이트 콘텐츠 변환
-make lint      # 프론트매터 및 링크 유효성 검사
+make sync      # wiki/ → site content conversion
+make lint      # frontmatter and link validation
 make build     # quarto render → _site/
-make preview   # 로컬 미리보기 (live reload)
-make clean     # _site/ 및 __pycache__ 삭제
+make preview   # local preview (live reload)
+make clean     # delete _site/ and __pycache__
 ```
 
 ---
 
-## 기여하기
+## Contributing
 
-문서는 Obsidian(`vault/`)에서 작성하고 Quarto를 통해 발행한다. 전체 워크플로우는 [README](https://github.com/sungkukpark/renderbrains-docs#contributing)를 참고한다.
+Documentation is authored in Obsidian (`vault/`) and published via Quarto. See the [README](https://github.com/sungkukpark/renderbrains-docs#contributing) for the full workflow.
