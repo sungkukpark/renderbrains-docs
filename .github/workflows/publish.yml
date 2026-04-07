@@ -20,6 +20,7 @@ jobs:
   publish:
     name: publish → S3
     runs-on: ubuntu-latest
+    environment: prod
     permissions:
       contents: read
 
