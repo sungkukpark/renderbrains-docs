@@ -18,10 +18,10 @@ concurrency:
 
 jobs:
   publish:
-    name: publish → GitHub Pages
+    name: publish → S3
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: read
 
     steps:
       - name: Checkout
@@ -45,9 +45,18 @@ jobs:
       - name: Lint
         run: uv run python scripts/lint.py
 
-      - name: Publish to GitHub Pages
-        uses: quarto-dev/quarto-actions/publish@v2
+      - name: Render site
+        run: quarto render
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
         with:
-          target: gh-pages
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2
+
+      - name: Deploy to S3
+        run: |
+          aws s3 sync _site/ s3://renderbrains.com/ \
+            --delete \
+            --exact-timestamps
