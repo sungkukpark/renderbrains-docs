@@ -5,8 +5,12 @@ on:
     branches:
       - main
     paths:
-      - "docs/**"
-      - "vault/**"
+      - "wiki/**"
+      - "tutorials/**"
+      - "how-to/**"
+      - "reference/**"
+      - "explanation/**"
+      - "index.qmd"
       - "scripts/**"
       - "_quarto.yml"
       - "pyproject.toml"
