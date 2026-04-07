@@ -481,8 +481,8 @@ def main() -> None:
     parser.add_argument(
         "--docs",
         type=Path,
-        default=REPO_ROOT / "docs",
-        help="Path to docs/ directory (default: repo_root/docs)",
+        default=REPO_ROOT,
+        help="Path to publish output directory (default: repo root)",
     )
     parser.add_argument(
         "--dry-run",

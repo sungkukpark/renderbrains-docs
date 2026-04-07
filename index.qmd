@@ -39,4 +39,4 @@ Architecture Decision Records (ADRs) tracking significant technical choices and 
 
 ## Contributing
 
-Documentation is authored in Obsidian (`vault/`) and published via Quarto (`docs/`). See the [README](https://github.com/sungkukpark/renderbrains-docs#contributing) for the full authoring workflow.
+Documentation is authored in Obsidian (`vault/`) and published via Quarto. See the [README](https://github.com/sungkukpark/renderbrains-docs#contributing) for the full authoring workflow.

@@ -2,34 +2,36 @@ project:
   type: website
   output-dir: _site
   render:
-    - docs/**
-  resources:
-    - docs/assets/
+    - index.qmd
+    - guides/**
+    - architecture/**
+    - references/**
+    - decisions/**
 
 website:
   title: "RenderBrains Docs"
   description: "Official documentation and knowledge base for RenderBrains."
-  site-url: "https://docs.renderbrains.com"
+  site-url: "https://renderbrains.com"
   repo-url: "https://github.com/sungkukpark/renderbrains-docs"
   repo-actions: [edit, issue]
-  favicon: docs/assets/favicon.ico
+  favicon: assets/favicon.ico
   open-graph: true
 
   navbar:
     background: dark
     foreground: light
-    logo: docs/assets/logo.svg
+    logo: assets/logo.svg
     logo-alt: "RenderBrains"
     left:
-      - href: docs/index.qmd
+      - href: index.qmd
         text: Home
-      - href: docs/guides/index.qmd
+      - href: guides/index.qmd
         text: Guides
-      - href: docs/architecture/index.qmd
+      - href: architecture/index.qmd
         text: Architecture
-      - href: docs/references/index.qmd
+      - href: references/index.qmd
         text: References
-      - href: docs/decisions/index.qmd
+      - href: decisions/index.qmd
         text: Decisions
     right:
       - icon: github
@@ -62,7 +64,7 @@ format:
     code-copy: true
     code-overflow: wrap
     highlight-style: github
-    css: docs/assets/custom.css
+    css: assets/custom.css
 
 execute:
   freeze: true
