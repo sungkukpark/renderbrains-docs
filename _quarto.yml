@@ -1,6 +1,10 @@
 project:
   type: website
   output-dir: _site
+  render:
+    - docs/**
+  resources:
+    - docs/assets/
 
 website:
   title: "RenderBrains Docs"
