@@ -38,8 +38,8 @@ desktop.ini
 *.swo
 *~
 
-# Obsidian settings (personal, not shared)
-.obsidian/
+# Obsidian vault (personal, local only — sync via Obsidian Sync / iCloud / Dropbox)
+vault/
 
 # Quarto freeze cache (keep if you want reproducible frozen outputs)
 # _freeze/
