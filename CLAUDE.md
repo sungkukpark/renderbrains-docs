@@ -494,13 +494,10 @@ Quarto config is shared infrastructure. Edit carefully and review changes.
 
 This is the minimum mapping expected between Obsidian notes and publishable docs.
 
-| Source in `vault/` | Output |
+| Source | Output |
 |---|---|
-| `vault/notes/*.md` | `tutorials/`, `how-to/`, `reference/`, or `explanation/` |
-| `vault/projects/*.md` | `tutorials/` or `how-to/` |
-| `vault/references/*.md` | `reference/` |
-| `vault/daily/*.md` | not published by default |
-| `vault/inbox/*.md` | never published |
+| `wiki/*.md` (publish: true) | `tutorials/`, `how-to/`, `reference/`, or `explanation/` |
+| `vault/` | not published (local only) |
 
 ### Daily note rule
 Daily notes are source material, not final documents.

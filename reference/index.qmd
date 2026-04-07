@@ -15,5 +15,5 @@ listing:
 ---
 
 ::: {.callout-note}
-Reference 문서는 `vault/references/`에서 `make sync`로 발행된다. 레퍼런스를 추가하려면 `category: "reference"`, `publish: true`를 포함한 노트를 생성한다.
+Reference 문서는 `wiki/`에서 `make sync`로 발행된다. 레퍼런스를 추가하려면 `wiki/`에 `category: "reference"`, `publish: true`를 포함한 노트를 생성한다.
 :::

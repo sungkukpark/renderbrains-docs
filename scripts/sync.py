@@ -474,8 +474,8 @@ def main() -> None:
     parser.add_argument(
         "--vault",
         type=Path,
-        default=REPO_ROOT / "vault",
-        help="Path to vault/ directory (default: repo_root/vault)",
+        default=REPO_ROOT / "wiki",
+        help="Path to wiki/ directory (default: repo_root/wiki)",
     )
     parser.add_argument(
         "--docs",

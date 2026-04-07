@@ -40,7 +40,6 @@ desktop.ini
 
 # Obsidian vault (personal, local only — sync via Obsidian Sync / iCloud / Dropbox)
 vault/
-!vault/README.md
 
 # Quarto freeze cache (keep if you want reproducible frozen outputs)
 # _freeze/
