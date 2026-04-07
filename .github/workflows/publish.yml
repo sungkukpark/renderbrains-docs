@@ -11,6 +11,7 @@ on:
       - "_quarto.yml"
       - "pyproject.toml"
       - "uv.lock"
+  workflow_dispatch:
 
 concurrency:
   group: publish
