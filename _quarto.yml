@@ -10,7 +10,7 @@ website:
   title: "RenderBrains Docs"
   description: "Official documentation and knowledge base for RenderBrains."
   site-url: "https://docs.renderbrains.com"
-  repo-url: "https://github.com/renderbrains/renderbrains-docs"
+  repo-url: "https://github.com/sungkukpark/renderbrains-docs"
   repo-actions: [edit, issue]
   favicon: docs/assets/favicon.ico
   open-graph: true
@@ -33,7 +33,7 @@ website:
         text: Decisions
     right:
       - icon: github
-        href: https://github.com/renderbrains/renderbrains-docs
+        href: https://github.com/sungkukpark/renderbrains-docs
         aria-label: GitHub
 
   sidebar: false
@@ -43,7 +43,7 @@ website:
       &copy; RenderBrains. Built with [Quarto](https://quarto.org).
     right:
       - icon: github
-        href: https://github.com/renderbrains/renderbrains-docs
+        href: https://github.com/sungkukpark/renderbrains-docs
 
   search:
     location: navbar

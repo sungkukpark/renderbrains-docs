@@ -23,7 +23,7 @@ The published site is available at **[docs.renderbrains.com](https://docs.render
 ### Setup
 
 ```bash
-git clone https://github.com/renderbrains/renderbrains-docs.git
+git clone https://github.com/sungkukpark/renderbrains-docs.git
 cd renderbrains-docs
 uv sync
 ```
