@@ -42,7 +42,12 @@ jobs:
         uses: quarto-dev/quarto-actions/setup@v2
 
       - name: Sync vault → docs
-        run: uv run python scripts/sync.py
+        run: |
+          if [ -d vault ]; then
+            uv run python scripts/sync.py
+          else
+            echo "vault/ not present — skipping sync (CI environment)"
+          fi
 
       - name: Lint
         run: uv run python scripts/lint.py
