@@ -1,0 +1,21 @@
+---
+title: "Explanation"
+description: "개념, 아키텍처 설계 원리, Architecture Decision Records(ADR)."
+listing:
+  contents: "*.qmd"
+  exclude:
+    filename: "index.qmd"
+  type: default
+  sort: "date desc"
+  fields: [title, description, date]
+---
+
+RenderBrains의 내부 구조, 설계 원리, 기술적 의사결정의 배경을 다룬다. '무엇'보다 '왜'를 설명하는 문서다.
+
+ADR은 한 번 머지되면 불변이다. 대체된 결정은 `archived`로 표시하고 후속 ADR로 링크한다.
+
+---
+
+::: {.callout-note}
+Explanation 문서는 `vault/`에서 `make sync`로 발행된다. 개념 노트는 `category: "explanation"`, ADR은 `category: "explanation"`, `type: "decision"`으로 작성한다.
+:::

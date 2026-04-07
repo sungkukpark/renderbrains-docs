@@ -1,0 +1,19 @@
+---
+title: "Tutorials"
+description: "학습 중심의 단계별 가이드. RenderBrains를 처음 배우는 사람을 위한 안내."
+listing:
+  contents: "*.qmd"
+  exclude:
+    filename: "index.qmd"
+  type: default
+  sort: "title asc"
+  fields: [title, description, date]
+---
+
+처음 접하는 사람이 RenderBrains의 핵심 개념과 워크플로우를 단계별로 익힐 수 있도록 구성된 학습 자료다.
+
+---
+
+::: {.callout-note}
+Tutorials은 `vault/`에서 `make sync`로 발행된다. 새 튜토리얼을 작성하려면 `vault/notes/` 또는 `vault/projects/`에 `category: "tutorials"`, `publish: true`를 포함한 노트를 생성한다.
+:::

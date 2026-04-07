@@ -1,0 +1,19 @@
+---
+title: "Reference"
+description: "API, 설정 스키마, 열거값 등 작업 중 조회하는 기술 레퍼런스."
+listing:
+  contents: "*.qmd"
+  exclude:
+    filename: "index.qmd"
+  type: default
+  sort: "title asc"
+  fields: [title, description, date]
+---
+
+작업 중 필요한 정보를 빠르게 찾기 위한 기술 레퍼런스다. API 인터페이스, 설정 옵션, 열거값, 룩업 테이블을 포함한다.
+
+---
+
+::: {.callout-note}
+Reference 문서는 `vault/references/`에서 `make sync`로 발행된다. 레퍼런스를 추가하려면 `category: "reference"`, `publish: true`를 포함한 노트를 생성한다.
+:::

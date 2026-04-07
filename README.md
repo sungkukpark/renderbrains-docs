@@ -5,7 +5,7 @@ Official documentation and knowledge base for [RenderBrains](https://renderbrain
 Built on **Obsidian + Quarto + Python CLI**:
 
 - `vault/` — personal wiki and authoring space (Obsidian)
-- `guides/`, `architecture/`, `references/`, `decisions/` — published site content (Quarto/QMD)
+- `tutorials/`, `how-to/`, `reference/`, `explanation/` — published site content (Quarto/QMD)
 - `scripts/` — sync, lint, and build automation
 
 The published site is available at **[renderbrains.com](https://renderbrains.com)**.
@@ -31,7 +31,7 @@ uv sync
 ### Run the full pipeline
 
 ```bash
-make check
+make run
 ```
 
 This runs `sync → lint → build` in sequence. All three must pass before committing to `main`.
@@ -53,10 +53,10 @@ make clean     # remove _site/ and __pycache__
 ```
 renderbrains-docs/
 ├── index.qmd               # Home page
-├── guides/                 # Step-by-step documentation
-├── architecture/           # Engine internals and design
-├── references/             # API references and lookup material
-├── decisions/              # Architecture Decision Records
+├── tutorials/              # Step-by-step learning guides
+├── how-to/                 # Task-oriented recipes
+├── reference/              # API references and lookup material
+├── explanation/            # Concepts, architecture, ADRs
 ├── assets/                 # Site assets (logo, CSS, favicon)
 │
 ├── vault/                  # Obsidian personal wiki (author here)
@@ -102,7 +102,7 @@ Add or update the frontmatter:
 title: "Frame Graph"
 slug: "frame-graph"
 publish: true
-category: "architecture"
+category: "explanation"
 tags:
   - rendering
   - engine
@@ -178,7 +178,7 @@ Notes in `vault/inbox/` and `vault/daily/` are **never published**.
 | Context | Format |
 |---|---|
 | Authoring in `vault/` | `[[Frame Graph]]` |
-| Published in site | `[Frame Graph](../architecture/frame-graph.qmd)` |
+| Published in site | `[Frame Graph](../explanation/frame-graph.qmd)` |
 
 The sync script converts wiki links automatically. Do not manually maintain both forms in the same source note.
 
@@ -188,7 +188,7 @@ The sync script converts wiki links automatically. Do not manually maintain both
 
 1. Branch from `main`: `git checkout -b docs/your-topic`
 2. Author in `vault/`
-3. Run `make check` — all three steps must pass
+3. Run `make run` — all three steps must pass
 4. Open a PR with the [PR template](.github/pull_request_template.md)
 5. At least one team review required for changes to site content, `scripts/`, or `_quarto.yml`
 

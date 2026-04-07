@@ -42,11 +42,10 @@ REQUIRED_PUBLISH_FIELDS: list[str] = [
 ]
 
 CATEGORY_MAP: dict[str, str] = {
-    "architecture": "architecture",
-    "guides": "guides",
-    "references": "references",
-    "decisions": "decisions",
-    "reports": "reports",
+    "tutorials": "tutorials",
+    "how-to": "how-to",
+    "reference": "reference",
+    "explanation": "explanation",
 }
 
 # vault/ sub-directories that are NEVER published, even if a note has publish: true

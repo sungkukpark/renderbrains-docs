@@ -1,0 +1,19 @@
+---
+title: "How-To"
+description: "작업 중심의 레시피. 특정 목표를 달성하는 방법을 단계별로 설명한다."
+listing:
+  contents: "*.qmd"
+  exclude:
+    filename: "index.qmd"
+  type: default
+  sort: "title asc"
+  fields: [title, description, date]
+---
+
+특정 문제를 해결하거나 작업을 완료하기 위한 실용적인 안내다. 기본 지식을 갖춘 사람이 목표 지점까지 도달하는 방법을 설명한다.
+
+---
+
+::: {.callout-note}
+How-To 문서는 `vault/`에서 `make sync`로 발행된다. 새 레시피를 작성하려면 `vault/notes/` 또는 `vault/projects/`에 `category: "how-to"`, `publish: true`를 포함한 노트를 생성한다.
+:::

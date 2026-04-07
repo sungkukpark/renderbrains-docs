@@ -3,10 +3,12 @@ project:
   output-dir: _site
   render:
     - index.qmd
-    - guides/**
-    - architecture/**
-    - references/**
-    - decisions/**
+    - tutorials/**
+    - how-to/**
+    - reference/**
+    - explanation/**
+  resources:
+    - preview.html
 
 website:
   title: "RenderBrains Docs"
@@ -25,14 +27,14 @@ website:
     left:
       - href: index.qmd
         text: Home
-      - href: guides/index.qmd
-        text: Guides
-      - href: architecture/index.qmd
-        text: Architecture
-      - href: references/index.qmd
-        text: References
-      - href: decisions/index.qmd
-        text: Decisions
+      - href: tutorials/index.qmd
+        text: Tutorials
+      - href: how-to/index.qmd
+        text: How-To
+      - href: reference/index.qmd
+        text: Reference
+      - href: explanation/index.qmd
+        text: Explanation
     right:
       - icon: github
         href: https://github.com/sungkukpark/renderbrains-docs

@@ -1,4 +1,4 @@
-.PHONY: sync lint build preview check clean help
+.PHONY: sync lint build preview run clean help
 
 # Default target
 help:
@@ -8,7 +8,7 @@ help:
 	@echo "  make lint     Validate frontmatter and links in publishable notes"
 	@echo "  make build    Render the Quarto site to _site/"
 	@echo "  make preview  Start a live-reload preview server"
-	@echo "  make check    Run sync + lint + build (full pipeline)"
+	@echo "  make run      Run sync + lint + build (full pipeline)"
 	@echo "  make clean    Remove _site/ and Python cache files"
 	@echo ""
 
@@ -32,7 +32,7 @@ build:
 preview:
 	"$(QUARTO)" preview
 
-check: sync lint build
+run: sync lint build
 
 clean:
 	rm -rf _site

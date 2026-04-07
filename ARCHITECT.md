@@ -56,16 +56,20 @@ The LLM uses this file to locate relevant pages quickly without scanning the ent
 Append-only chronological record. Never edit past entries.
 
 ```
-2026-04-07 [INGEST] "Deferred Rendering Survey" (vault/references/deferred-rendering-survey.md)
+## [2026-04-07] ingest | Deferred Rendering Survey
+  → source: vault/references/deferred-rendering-survey.md
   → updated: Frame Graph, Deferred Rendering Overview
   → created: Tile-Based Deferred Rendering
 
-2026-04-07 [QUERY] "What are the tradeoffs between forward and deferred rendering?"
+## [2026-04-07] query | What are the tradeoffs between forward and deferred rendering?
   → synthesized from: Frame Graph, Deferred Rendering Overview
   → new page: Forward vs Deferred Rendering Tradeoffs
 
-2026-04-08 [LINT] 3 orphan pages found, 1 contradiction flagged (see lint output)
+## [2026-04-08] lint | health check
+  → 3 orphan pages found, 1 contradiction flagged (see lint output)
 ```
+
+**Grep tip:** `grep "^## \[" vault/log.md | tail -5` gives the last 5 entries.
 
 ---
 
@@ -83,7 +87,7 @@ Steps:
    One source commonly touches 10–15 pages; that is expected.
 5. If a page does not exist yet, create it with a brief stub and a `## Sources` section.
 6. Update `vault/index.md` — add new pages, revise summaries of updated pages.
-7. Append an `[INGEST]` entry to `vault/log.md` listing the source and affected pages.
+7. Append an entry to `vault/log.md` using the format `## [YYYY-MM-DD] ingest | Source Title`.
 
 Rules:
 - Never modify the source file.
@@ -101,8 +105,7 @@ Steps:
 3. Synthesize an answer with inline citations (e.g., `[[Frame Graph]]`).
 4. If the answer is substantial and likely to be asked again, write it as a new
    wiki page in `vault/notes/`.
-5. Append a `[QUERY]` entry to `vault/log.md` listing the question, pages consulted,
-   and whether a new page was created.
+5. Append an entry to `vault/log.md` using the format `## [YYYY-MM-DD] query | Question summary`.
 
 ### Lint
 
@@ -117,7 +120,7 @@ Steps:
    - Missing cross-references (pages that should link to each other but don't)
    - Pages referenced in `[[Wiki Links]]` that do not exist
 3. Suggest specific sources to investigate for identified gaps.
-4. Append a `[LINT]` entry to `vault/log.md` with a summary of findings.
+4. Append an entry to `vault/log.md` using the format `## [YYYY-MM-DD] lint | health check`.
 
 ---
 
@@ -128,7 +131,7 @@ The wiki and the published docs site are separate concerns.
 To promote a wiki page to the published site:
 1. Add required frontmatter (see `CLAUDE.md` §6 and `vault/templates/publishable-note.md`).
 2. Set `publish: true`.
-3. Run `make check` — sync → lint → build must all pass.
+3. Run `make run` — sync → lint → build must all pass.
 4. Commit and push. CI deploys automatically on merge to `main`.
 
 Not every wiki page needs to be published. Publish deliberately.
@@ -160,7 +163,7 @@ Not every wiki page needs to be published. Publish deliberately.
 
 ```bash
 # Run a full wiki health check (sync + lint + build)
-make check
+make run
 
 # Preview the published site locally
 make preview
@@ -168,7 +171,7 @@ make preview
 # Common workflow after adding sources to vault/inbox/
 # 1. Ask the LLM to Ingest the new source(s)
 # 2. Review the updated wiki pages in Obsidian
-# 3. If any should be published: add frontmatter, make check, commit
+# 3. If any should be published: add frontmatter, make run, commit
 ```
 
 ---

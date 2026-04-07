@@ -78,11 +78,10 @@ knowledge-base/
 │
 ├── docs/                          # generated or curated publishable content
 │   ├── index.qmd
-│   ├── guides/
-│   ├── references/
-│   ├── architecture/
-│   ├── decisions/
-│   └── reports/
+│   ├── tutorials/
+│   ├── how-to/
+│   ├── reference/
+│   └── explanation/
 │
 ├── scripts/
 │   ├── sync.py                    # vault -> docs sync
@@ -172,7 +171,7 @@ Every publishable note must contain frontmatter:
 title: "Deferred Rendering Overview"
 slug: "deferred-rendering-overview"
 publish: true
-category: "architecture"
+category: "explanation"
 tags:
   - rendering
   - graphics
@@ -196,6 +195,12 @@ owner: "team"
 - `owner`
 - `source`
 - `aliases`
+
+### Allowed `category` values
+- `tutorials`
+- `how-to`
+- `reference`
+- `explanation`
 
 ### Allowed `status` values
 - `draft`
@@ -257,8 +262,8 @@ Use Obsidian wiki links:
 Must become normal Markdown links:
 
 ```md
-[Frame Graph](../architecture/frame-graph.qmd)
-[Shader Compilation Pipeline](../guides/shader-compilation-pipeline.qmd)
+[Frame Graph](../explanation/frame-graph.qmd)
+[Shader Compilation Pipeline](../how-to/shader-compilation-pipeline.qmd)
 ```
 
 ### Source-of-truth rule
@@ -340,7 +345,7 @@ Working note tied to a team project.
 Externally sourced material summarized internally.
 
 ### `decision`
-Architecture or process decision. Should publish to `docs/decisions/`.
+Architecture or process decision. Should publish to `explanation/` with `type: "decision"`.
 
 ### `report`
 Time-bound analysis or summary.
@@ -462,14 +467,16 @@ website:
   search: true
   navbar:
     left:
-      - href: docs/index.qmd
+      - href: index.qmd
         text: Home
-      - href: docs/guides/index.qmd
-        text: Guides
-      - href: docs/architecture/index.qmd
-        text: Architecture
-      - href: docs/references/index.qmd
-        text: References
+      - href: tutorials/index.qmd
+        text: Tutorials
+      - href: how-to/index.qmd
+        text: How-To
+      - href: reference/index.qmd
+        text: Reference
+      - href: explanation/index.qmd
+        text: Explanation
 
 format:
   html:
@@ -487,11 +494,11 @@ Quarto config is shared infrastructure. Edit carefully and review changes.
 
 This is the minimum mapping expected between Obsidian notes and publishable docs.
 
-| Source in `vault/` | Output in `docs/` |
+| Source in `vault/` | Output |
 |---|---|
-| `vault/notes/*.md` | `docs/references/` or `docs/guides/` |
-| `vault/projects/*.md` | `docs/guides/` or `docs/reports/` |
-| `vault/references/*.md` | `docs/references/` |
+| `vault/notes/*.md` | `tutorials/`, `how-to/`, `reference/`, or `explanation/` |
+| `vault/projects/*.md` | `tutorials/` or `how-to/` |
+| `vault/references/*.md` | `reference/` |
 | `vault/daily/*.md` | not published by default |
 | `vault/inbox/*.md` | never published |
 
@@ -595,7 +602,7 @@ Ensure:
 title: "Frame Graph"
 slug: "frame-graph"
 publish: true
-category: "architecture"
+category: "explanation"
 tags:
   - rendering
   - engine
@@ -628,7 +635,7 @@ title: "Frame Graph"
 
 A frame graph organizes render passes and resource lifetimes explicitly.
 
-See also [Deferred Rendering Overview](../architecture/deferred-rendering-overview.qmd) and [Shader Compilation Pipeline](../guides/shader-compilation-pipeline.qmd).
+See also [Deferred Rendering Overview](../explanation/deferred-rendering-overview.qmd) and [Shader Compilation Pipeline](../how-to/shader-compilation-pipeline.qmd).
 
 ## Why it matters
 
