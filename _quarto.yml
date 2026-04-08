@@ -7,6 +7,7 @@ project:
     - how-to/**
     - reference/**
     - explanation/**
+    - privacy-policy.qmd
   resources:
     - preview.html
 
@@ -45,6 +46,8 @@ website:
   page-footer:
     left: |
       &copy; RenderBrains. Built with [Quarto](https://quarto.org).
+    center: |
+      [Privacy Policy](privacy-policy.qmd)
     right:
       - icon: github
         href: https://github.com/sungkukpark/renderbrains-docs
