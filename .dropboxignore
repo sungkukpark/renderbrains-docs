@@ -1,0 +1,10 @@
+# Quarto build output — large, regenerated on every build
+_site/
+.quarto/
+
+# Python cache
+__pycache__/
+.venv/
+
+# Local temp
+tmp/

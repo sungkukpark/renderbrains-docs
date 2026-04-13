@@ -443,16 +443,35 @@ def sync(vault_dir: Path, docs_dir: Path, dry_run: bool = False) -> int:
         output_text = dump(pub_meta, converted_body)
 
         if dry_run:
-            print(f"  [dry-run] would write → {note.output_path}")
+            print(f"  [dry-run] would write -> {note.output_path}")
         else:
             note.output_path.parent.mkdir(parents=True, exist_ok=True)
             note.output_path.write_text(output_text, encoding="utf-8")
-            print(f"  wrote → {note.output_path.relative_to(REPO_ROOT)}")
+            print(f"  wrote -> {note.output_path.relative_to(REPO_ROOT)}")
 
     if convert_errors:
         for e in convert_errors:
             print(f"  ERROR: {e}", file=sys.stderr)
         return 1
+
+    # --- Step 5: Cleanup stale output files ---
+    expected_outputs = {note.output_path for note in publishable if note.output_path is not None}
+    stale_count = 0
+
+    for category_folder in CATEGORY_MAP.values():
+        category_dir = docs_dir / category_folder
+        if not category_dir.is_dir():
+            continue
+        for qmd_file in sorted(category_dir.glob("*.qmd")):
+            if qmd_file.name == "index.qmd":
+                continue
+            if qmd_file not in expected_outputs:
+                if dry_run:
+                    print(f"  [dry-run] would delete stale -> {qmd_file.relative_to(REPO_ROOT)}")
+                else:
+                    qmd_file.unlink()
+                    print(f"  deleted stale -> {qmd_file.relative_to(REPO_ROOT)}")
+                stale_count += 1
 
     if all_warnings:
         print(f"\n  {len(all_warnings)} warning(s):")
@@ -460,7 +479,7 @@ def sync(vault_dir: Path, docs_dir: Path, dry_run: bool = False) -> int:
             print(f"  WARN: {w}")
 
     written = len(publishable) - len(convert_errors)
-    print(f"\nsync: complete — {written} notes written, {len(all_warnings)} warnings")
+    print(f"\nsync: complete -- {written} notes written, {stale_count} stale deleted, {len(all_warnings)} warnings")
     return 0
 
 

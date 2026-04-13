@@ -1,0 +1,59 @@
+---
+title: "Math for 3D - Ch.01: Trigonometry"
+slug: "math-3d-ch01-trigonometry"
+publish: true
+category: "tutorials"
+tags:
+  - math
+  - trigonometry
+  - 3d
+  - games-programming
+status: "draft"
+updated: 2026-04-13
+owner: "sungkukpark"
+summary: "삼각함수의 기초와 3D/게임 프로그래밍에서의 활용. Wojciech Sterna의 Math for 3D/Games Programmers Ch.01."
+---
+
+# Ch.01: Trigonometry
+
+Part I: Analytic Geometry
+
+---
+
+## 핵심 개념
+
+<!-- 강의에서 다룬 핵심 개념을 정리 -->
+
+### 단위원 (Unit Circle)
+
+### 삼각함수 정의
+
+### 주요 항등식
+
+### 역삼각함수
+
+---
+
+## 3D/게임에서의 활용
+
+<!-- 실제 게임/3D 프로그래밍에서 어디에 쓰이는지 -->
+
+---
+
+## 코드 예제
+
+```csharp
+// Unity C# 예제
+```
+
+---
+
+## 강의 노트
+
+<!-- 강의 중 메모, 강사의 설명 방식, 인상적인 포인트 -->
+
+---
+
+## 참고
+
+<!-- 관련 자료, 링크, 연습 문제 등 -->
